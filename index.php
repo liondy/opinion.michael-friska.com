@@ -2,15 +2,21 @@
 
 include_once 'storage/store.php';
 
-if (isset($_POST['testi-name']) && isset($_POST['testi-opinion']) && isset($_POST['testi-rating'])) {
-  
+error_reporting(E_ALL);
+
+// echo 'ok';
+// echo "<br/>";
+// echo $_SERVER['REQUEST_METHOD'];
+// echo "<br/>";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  // echo 'post';
+
   date_default_timezone_set("Asia/Jakarta");
 
-  
-  $name = $_POST['testi-name'];
-  $opinion = $_POST['testi-opinion'];
-  $rating = $_POST['testi-rating'];
-  $time = date("Y-m-d h:i:s");
+  // echo "<br/>";
+  // echo $opinion;
   
   $servername = SERVERNAME;
   $username = USERNAME;
@@ -19,21 +25,30 @@ if (isset($_POST['testi-name']) && isset($_POST['testi-opinion']) && isset($_POS
   
   $conn = new mysqli($servername, $username, $password, $dbname);
 
+  $name = mysqli_real_escape_string($conn, $_POST['testi-name']);
+  $opinion = mysqli_real_escape_string($conn, $_POST['testi-opinion']);
+  $rating = mysqli_real_escape_string($conn, $_POST['testi-rating']);
+  $time = date("F d\, Y");
+
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
 
-  $sql = "INSERT INTO opinion (`nama`, `opini`, `rate`, `timestamp`)
-  VALUES ($name, $opinion, $rating, $time)";
+  $sql = "INSERT INTO `opinion` (`nama`, `opini`, `rate`, `timestamp`)
+  VALUES ('$name', '$opinion', $rating, '$time')";
+
+  // echo $sql;
 
   if ($conn->query($sql) === TRUE) {
     echo "New record created successfully";
+    header("Location: https://michael-friska.com/");
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
   }
 
   $conn->close();
 }
+else {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,3 +85,4 @@ if (isset($_POST['testi-name']) && isset($_POST['testi-opinion']) && isset($_POS
 </body>
 
 </html>
+<?php } ?>

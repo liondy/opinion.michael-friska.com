@@ -1,6 +1,8 @@
 <?php 
-  include_once 'storage/store.php';
-
+  include_once '../storage/store.php';
+  
+  header("Content-type:application/json");
+  
   $servername = SERVERNAME;
   $username = USERNAME;
   $password = PASSWORD;
@@ -14,10 +16,10 @@
 
   $query = "SELECT * FROM `opinion`";
 
-  $result = $conn->query($sql);
+  $result = $conn->query($query);
 
-  $json = [];
   if ($result->num_rows > 0) {
+    $json = [];
     // output data of each row
     while($row = $result->fetch_assoc()) {
       $data['name'] = $row['nama'];
@@ -26,11 +28,10 @@
       $data['time'] = $row['timestamp'];
       $json[] = $data;
     }
+    echo json_encode($json, true);
   } else {
     echo "0 results";
   }
-
-  echo json_encode($json, true);
   
   $conn -> close();
 ?>
